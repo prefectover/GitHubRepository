@@ -1,0 +1,232 @@
+一、SQL Server的系统数据库
+    1.maste数据库
+        主要记录了Sql Server系统的所有信息
+    2.tempdb数据库
+        为临时表和其他临时存储需求提供存储空间
+    3.model数据库
+        建立所有用户数据库时的模板
+    4.msdb数据库
+        数据库在Sql Server代理程序调度报警和作业时使用
+
+二、T_Sql语句
+数据库操作
+    1.新建数据库
+    CREATE DATABASE db_name
+    ON PRIMARY
+    {
+        NAME='逻辑名称',
+        FILENAME='文件路径.mdf',
+        SIZE=nmb,
+        MAXSIZE=nmb,
+        FILEGROWTH=n%
+    }
+    2.修改数据库大小
+    ALTER DATABASE db_name
+    MODIFY FILE
+    {
+        NAME='逻辑名称',
+        SIZE=nmb
+    }
+    3.收缩数据库
+    DBCC SHRINKDATABASE(db_name, 1) --后面1是收缩比
+    4.更改数据库名
+    EXEC SP_RENAMEDB 'old_name', 'new_name'
+    5.删库
+    USE maste
+    GO
+    DROP DATABASE db_name --这条-_-
+    6.分离数据库
+    点击'分离'后在ssms中,看不到数据库,在本地文件可以
+    7.附加数据库
+    6分离后，点击'附加'，又可以显示了.
+表操作
+    1.创建表
+    USE db_name
+    GO
+    CREATE TABLE t_name
+    (
+        col_name int PRIMARY key identity,
+        col_name1 char(6) not null,
+        col_name1 char(6) constraint wz references t_name1(id-主键) --设置外键
+    )
+    2.查看表结构
+    EXEC sp_help t_name;
+    3.重命名表
+    EXEC sp_rename 'old_tableName', 'new_tableName'
+    4.重命名表列
+    EXEC sp_rename 'old_tableName.old_colName', 'new_colName', 'column'
+    5.添加新列
+    ALTER TABLE t_name add new_colName int not null
+    6.修改列属性
+    ALTER TABLE t_name alter column col_name varchar(10)
+    7.删除列
+    ALTER TABLE t_name drop column col_name
+    8.删除表
+    DROP TABLE t_name --不能恢复
+    9.清除表中数据
+    TRUNCATE TABLE t_name
+    10.创建主键约束
+    ALTER TABLE t_name add constraint pk primary key clustered (列名)
+    11.创建外键约束
+    ALTER TABLE t_name add constraint wz foreign key (列名-外键) 
+    references t_name1(列名-主键)
+数据操作
+    1.数据的添加
+    INSERT [INTO(into可选)] t_name (col_name1,col_name2) VALUES(data_1, data_2)
+    --下面可以拷贝另一个表
+    INSERT t_name(col_name1,col_name2) 
+    SELECT col_name1,col_name2 FROM t_name1 WHERE 条件
+    2.更新数据
+    UPDATE t_name SET col_name='value'
+    UPDATE t_name SET col_name='value' WHERE 条件
+    3.删除数据
+    DELETE t_name WHERE 条件 --不加where删除所有(危险操作)
+    4.查询数据
+    SELECT col_name1, col_name2 FROM t_name WHERE 条件 --*号表示查询所有
+    SELECT DISTINCT col_name FROM t_name --DISTINCT过滤重复数据
+    SELECT TOP 10 col_name FROM t_name --查看前十条记录
+    5.常用查询条件
+    >  <  =  >=  <= != <>(不等于)
+    BETWEEN 10 AND 20 (返回值在10到20之间数)
+    IN(2,3,4,5) (返回值只是2 3 4 5的结果)
+    NOT IN(2, 3, 4) (返回值不是2 3 4的结果)
+    LIKE '张_' (%代表匹配任意字符，_代表匹配单个字符,都是通配符)
+    LIKE '张三\%' ESCAPE '\' (当查询含有通配符时,可查询通配符%)
+    col_name IS NULL (返回值是NULL)
+    NOT col_name IS NULL (返回不是空的集合)
+    SELECT * INTO new_Table FROM t_name (将表t_name复制到新表new_Table)
+    SELECT * INTO #new_Table FROM t_name (新表new_Table是临时表)
+    SELECT col_name FROM t_name GROUP BY col_name1 (将查询结果分组)
+    SELECT col_name FROM t_name GROUP BY col_name1 having 条件 (将查询结果分组不包含条件)
+    SELECT col_name FROM t_name ORDER BY col_name1 asc (根据列col_name1升序)
+    SELECT col_name FROM t_name ORDER BY col_name1 desc (根据列col_name1降序)
+
+    SELECT count(*) as new_colName FROM t_name (查询所有行数)
+    SELECT count(col_name) as new_colName FROM t_name (查询所有行数, 过滤相同的)
+    SELECT sum(col_name) as new_colName FROM t_name (查询col_name总和)
+    SELECT avg(col_name) as new_colName FROM t_name (查询col_name平均)
+    SELECT max(col_name) as new_colName FROM t_name (查询col_name最大)
+    SELECT min(col_name) as new_colName FROM t_name (查询col_name最小)
+    COMPUTE 对查询结果集中的所有记录进行汇总统计
+    SELECT * FROM t_name ORDER BY col_name1
+    compute sum(col_name2)
+    6.多表连接查询
+    CROSS JOIN
+    SELECT col_name1,col_name2 FROM t_name CROSS JOIN t_name2 WHERE 条件--不加条件返回表1X表2数据
+    SELECT col_name1,col_name2 FROM t_name JOIN t_name2 ON 条件 --与上面结果一样
+    自身查询
+    SELECT ta.col_name1,tb.col_name2 FROM t_name as ta JOIN t_name as tb ON 条件
+    LEFT JOIN左外连接
+    RIGHT JOIN右外连接
+    FULL JOIN全外连接
+    SELECT * FROM t_name1 RIGHT JOIN t_name2 ON 条件 --匹配右连接
+
+数据完整性
+    设置索引 == 唯一约束
+    ALTER TABLE t_able ADD constraint name UNIQUE NONCLUSTERED (col_name)
+    CHECK约束 检查约束 检查输入
+    ALTER TABLE t_name ADD constraint name CHECK (条件)
+    默认约束 设置默认值
+    ALTER TABLE t_name ADD constraint name DEFAULT '默认值' FOR col_name
+    删除约束
+    ALTER TABLE t_name DROP constraint name
+
+规则
+    创建规则
+    CREATE RULE r_name as 条件 --添加格式 @a > 300 and @a < 600,@a代表条件项
+    绑定到列或表中
+    EXECUTE sp_bindrule 'r_name', 't_name.col_name'
+    解除绑定
+    EXECUTE sp_unbindrule 't_name.col_name'
+    删除规则
+    DROP RULE r_name
+
+默认
+    创建默认
+    CREATE DEFAULT d_name as '默认值'
+    绑定到列或表中
+    EXECUTE sp_binddefault d_name 't_name.col_name'
+    解除绑定
+    EXECUTE sp_unbinddefault 't_name.col_name'
+    删除默认
+    DROP DEFAULT 'd_name' --删除前一定要解除所有的绑定
+
+索引(创建后，也就是可以通过绑定的列名索引到行)
+    创建索引
+    CREATE [UNIQUE(唯一)][CLUSTERED(聚集)][NONCLUSTERED(非集聚)] INDEX i_name 
+    ON t_name[col_name]
+    查看索引信息
+    EXECUTE sp_helpindex t_name
+    删除索引
+    DROP INDEX t_name.i_name
+
+视图 (不能包含 COMPUTE和 UNCOMPUTE, 视图可以保护真实数据)
+    创建视图 --跟查询结果一样
+    CREATE VIEW v_name 
+    WITH
+        [ENCRYPTION(加密)][SCHEMABINDING(架构绑定)] --可选的意思
+    AS 
+        SELECT * FROM t_name
+
+    SELECT * FROM v_name  --结果和FROM t_name一样
+    修改视图
+    插入
+    INSERT v_name(col_name) values('value') --表中也增加
+    更新
+    UPDATE v_name set col_name = 'new_value' WHERE col_name = 'old_value'
+    查看视图
+    EXEC sp_helptext v_name
+    删除视图
+    DROP VIEW v_name
+
+存储过程与触发器
+    创建存储过程
+    CREATE PROC p_name AS
+    SELECT * FROM t_name
+    执行
+    EXECUTE p_name
+    可以绑定变量
+    CREATE PROC p_name
+    @sex varchar(10)
+    @name varchar(10) OUTPUT --表示返回值
+    SELECT *,@name=t_name.name FROM t_name WHERE col_name = @sex
+
+    EXECUTE p_name 'value' --可以根据变量查询数据
+    查看存储过程
+    EXECUTE sp_depends p_name
+    EXECUTE sp_help p_name
+    删除存储过程
+    DROP PROCEDURE p_name1,p_name2
+    创建触发器
+    CREATE TRIGGER tr_name ON t_name FOR INSERT
+    AS DECLARE @a char(10) SELECT @a=col_name FROM inserted(临时表)
+    INSERT INTO t_name1 VALUES(@a, 0)
+    --插入表1的内容的同时会更新表2
+
+    CREATE TRIGGER tr_name ON t_name FOR DELETE
+    AS DECLARE @a char(10) SELECT @a=col_name FROM deleted(临时表)
+    DELETE t_name1 WHERE col_name = @a
+    --删除表1的内容的同时会更新表2
+    查看触发器
+    EXEC sp_helptrigger tr_name
+    删除触发器
+    DROP TRIGGER tr_name
+
+函数
+    1.聚会函数
+    AVG COUNT MAX MIN SUM
+    2.数学函数
+    ABS CEILING(大于或等于所给数的最小整数) PI POWER(x的y次方) RAND(返回0~1之间的随机数)
+    3.配置函数
+    SELECT @@VERSION --当前数据库版本
+    SELECT @@LANGUAGE --当前语音
+    4.时间函数
+    SELECT getdate() --当前时间
+    SELECT day(getdate()) --取出今天多少号
+    SELECT month(getdate()) --月
+    SELECT year(getdate()) --年
+    SELECT dateadd(d,3,getdate()) as wawa_dateadd --加三天
+    --d表示天 m月 yy年
+    SELECT datename(d, '2010-07-15') --获取年月日 灵活
+    rank() over (order by col_name) --排名
+    SELECT rank() over (order by 高考分数 desc) as 名次, 高考分数 FROM t_name
