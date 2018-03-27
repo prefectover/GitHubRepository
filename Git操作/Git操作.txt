@@ -1,0 +1,73 @@
+获取Git存储库
+{
+    您通常通过以下两种方式之一获取Git存储库：
+
+    1.你可以取一个当前不受版本控制的本地目录，并将它变成一个Git仓库，或者
+    2.您可以从其他位置克隆现有的Git存储库。
+
+    一、在现有目录中初始化存储库
+    对于Linux：
+        $ cd /home/user/my_project
+    对于Mac：
+        $ cd /Users/user/my_project
+    对于Windows：
+        $ cd /c/user/my_project
+    并键入：
+        $ git init
+
+    如果你想开始版本控制现有的文件（而不是空目录）
+        $ git add *.c
+        $ git add LICENSE
+        $ git commit -m 'initial project version'
+
+    二、克隆现有的存储库
+        $ git clone https://github.com/libgit2/libgit2
+    如果要将存储库克隆到名称不同于某个目录的目录中libgit2
+        $ git clone https://github.com/libgit2/libgit2 mylibgit
+}
+
+检查文件的状态
+    $ git status
+    运行git status -s或者git status --short你从命令中获得了更简单
+
+跟踪新文件
+    $ git add FileName
+忽略文件
+    创建一个文件列表模式来匹配它们命名的模式.gitignore
+    $ cat .gitignore
+    *.[oa]
+    *~
+    您可以放入.gitignore文件的模式规则如下：
+        以空格开头的行或行将#被忽略。
+        标准全局模式工作，并将在整个工作树中递归应用。
+        您可以使用正斜杠（/）开始模式以避免递归性。
+        您可以用正斜杠（/）结束模式来指定一个目录。
+        您可以通过以感叹号（!）开头来取消模式。
+    Glob模式就像shell使用的简化正则表达式。星号（*）匹配零个或多个字符; 
+    [abc]匹配括号内的任何字符（在本例中为a，b或c）; 问号（?）匹配单个字符; 
+    括号中包含由连字符（[0-9]）分隔的字符可以匹配它们之间的任何字符（在本例中为0到9）。
+    您也可以使用两个星号来匹配嵌套的目录; a/**/z将匹配a/z，a/b/z，a/b/c/z，等等。
+    这是另一个示例.gitignore文件：
+    # ignore all .a files
+    *.a
+
+    # but do track lib.a, even though you're ignoring .a files above
+    !lib.a
+
+    # only ignore the TODO file in the current directory, not subdir/TODO
+    /TODO
+
+    # ignore all files in the build/ directory
+    build/
+
+    # ignore doc/notes.txt, but not doc/server/arch.txt
+    doc/*.txt
+
+    # ignore all .pdf files in the doc/ directory and any of its subdirectories
+    doc/**/*.pdf
+要查看您已更改但尚未暂存的内容，请输入git diff其他参数
+如果你想看看你下一次提交的内容，你可以使用git diff --staged
+并且git diff --cached看看你到目前为止已经上演了什么
+
+提交更改
+$ git commit
