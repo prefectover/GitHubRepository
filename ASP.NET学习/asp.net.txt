@@ -1,3 +1,5 @@
-ASP.NET Ö÷ÒªÊÇ
-	ÉúÃüÖÜÆÚ¡¢¼¸´ó¶ÔÏó£¨Application£¬Session£¬Context£¬Request£¬Response£©£¬Éí·İÑéÖ¤¡¢½ÇÉ«È¨ÏŞ¡¢Õ¾µãµØÍ¼¡¢Ö÷Ìâ¡¢×ÊÔ´¹ÜÀí¡¢Web.Config¡¢HttpModule¡¢HttpHandle
-mvc5 £¬EF code first£¬ Autofac
+ASP.NET ä¸»è¦æ˜¯
+	ç”Ÿå‘½å‘¨æœŸã€å‡ å¤§å¯¹è±¡ï¼ˆApplicationï¼ŒSessionï¼ŒContextï¼ŒRequestï¼ŒResponseï¼‰ï¼Œ
+	èº«ä»½éªŒè¯ã€è§’è‰²æƒé™ã€ç«™ç‚¹åœ°å›¾ã€ä¸»é¢˜ã€èµ„æºç®¡ç†ã€Web.Configã€HttpModuleã€
+	HttpHandle
+mvc5 ï¼ŒEF code firstï¼Œ Autofac
