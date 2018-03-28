@@ -1,0 +1,8 @@
+<!--[if !supportLists]-->0. Ctrl + 1 （快速修复）
+<!--[if !supportLists]-->1. Ctrl + D （删除当前行)
+<!--[if !supportLists]-->2. Ctrl + Alt + ↓（复制当前行到下一行）
+<!--[if !supportLists]-->3. Alt + / 或者说是 Ctrl + 空格（由于后者与输入法的快捷键冲突，所以，我一般都用前者） 作用：快速插入。
+<!--[if !supportLists]-->4. Alt+Shift+R 重命名非常好用。
+<!--[if !supportLists]-->5. Ctrl + Q 定位到最后编辑的地方。
+<!--[if !supportLists]-->6. Ctrl + Shift + O (自动导入包)
+<!--[if !supportLists]-->7. Ctrl+/ 注释当前行,再按则取消注释。

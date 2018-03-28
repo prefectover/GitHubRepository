@@ -1,0 +1,152 @@
+一、高级光照计算
+    1、Diffuse Color：漫反射颜色构成。这是对象的基本颜色。
+    2、Ambient Color：环境色颜色构成.这是当对象被RenderSettings. 中设定的环境色所照射时对象所表现的颜色。
+    3、Specular Color：对象反射高光的颜色。
+    4、Shininess Number：加亮时的光泽度，在0和1之间。0的时候你会发现更大的高亮也看起来像漫反射光照，1的时候你会获得一个细微的亮斑。
+    5、Emission Color：自发光颜色，当不被任何光照所照到时，对象的颜色。
+    6、最终的计算效果是：Ambient * RenderSettings ambient setting + (Light Color * Diffuse + Light Color * Specular) + Emission。
+
+二、纹理块不变色（ConstantColor）命令：
+    1、ConstantColor color：定义在combine命令中能被使用的不变颜色。
+
+三、Properties（在Unity中, 通常使用下划线来开始一个着色器属性的名字）
+     _Color ( "Main Color"       , Color) =      (1,1,1,0)
+    Intermal   Inspector title     Property type  Default value
+    内部名称   编辑器中显示的名称  属性类型	      默认值
+    1、name ("display name", Range (min, max)) = number：定义浮点数范围属性。
+    2、name ("display name", Color) = (number,number,number,number)：定义颜色属性。
+    3、name ("display name", 2D) = "name" { options }：定义2D纹理属性。
+    4、name ("display name", Rect) = "name" { options }：定义长方形（非2次方）纹理属性。
+    5、name ("display name", Cube) = "name" { options }：定义立方贴图纹理属性。
+    6、name ("display name", Float) = number：定义浮点数属性。
+    7、name ("display name", Vector) = (number,number,number,number)：定义一个四元素的容器（Vector4）属性。
+    2D纹理: For texture (2D, Cube) the default value is either an empty string, or one of built-in default textures: “white”, “black”, “gray” or “bump”.
+    纹理（2D，立方）的默认值是一个空字符串，或内置的默认纹理之一：“ 白 ”，“ 黑 ”，“ 灰色 ”或“凹凸”。
+    包含在着色器中的每一个属性通过name索引。属性会将display name显示在材质检视器中，还可以通过在等符号后为每个属性提供缺省值。
+    对于Range和Float类型的属性只能是单精度值。
+    对于Color和Vector类型的属性将包含4个由括号围住的数描述。
+    对于纹理(2D, Rect, Cube) 缺省值既可以是一个空字符串也可以是某个内置的缺省纹理："white", "black", "gray" or"bump"
+    随后在着色器中，属性值通过[name]来访问。
+
+四、Combine texture * primary DOUBLE, texture * constant
+    这里的texture来自当前的纹理(_MainTex)的颜色，它将与主要的顶点颜色相乘。主色为顶点光照颜色，它是由材质(Material)值计算出来的。最终Double的作用是这两个相乘后的两倍照明强度。 aplha值(在逗号以后)是由texture*constant得来(constant与constantColor有关)。另一个常用的混合模式称为previous(在这个shader未使用)，这是所有previous SetTexture的结果，并且可以用来混合多种纹理和颜色
+
+五、Unity5 SurfaceOutputStandard原型：
+    struct SurfaceOutputStandard
+    {
+	fixed3 Albedo;                  // 漫反射颜色
+	fixed3 Normal;                  // 切线空间法线
+	half3 Emission;                 //自发光
+	half Metallic;                    // 金属度；取0为非金属, 取1为金属
+	half Smoothness;             // 光泽度；取0为非常粗糙, 取1为非常光滑
+	half Occlusion;                 // 遮挡(默认值为1)
+	fixed Alpha;                      // 透明度
+    };
+    struct SurfaceOutput {
+    	half3 Albedo;     //像素的颜色
+    	half3 Normal;     //像素的法向值
+    	half3 Emission;   //像素的发散颜色
+    	half Specular;    //像素的镜面高光
+    	half Gloss;       //像素的发光强度
+    	half Alpha;       //像素的透明度
+    };
+
+六、unity shader类型
+    standard surface shader 标准的表面
+    unlit shader 无灯光的
+    image effect 图像效果
+    compute 计算
+    没有嵌套CG语言，也就是代码段中没有CGPROGARAM和ENDCG关键字的，就是固定功能着色器。
+    嵌套了CG语言，代码段中有surf函数的，就是表面着色器。
+    嵌套了CG语言，代码段中有#pragma vertex name和  #pragma fragment frag声明的，就是顶点着色器&片段着色器。	
+		    { Properties(属性)
+    unity中的shader { 一个或多个SubShader(子着色器) -> 一个或多个Pass(通道)
+		    { Fallback(备胎)
+
+七、剔除与深度测试（Culling & DepthTesting）相关句法
+    语句之一：Cull Back | Front| Off
+	此语句用于控制几何体的哪一面会被剔除（也就是不被绘制） 。其中：
+	Cull Back?? 不绘制背离观察者的几何面
+	Cull Front?? 不绘制面向观察者的几何面，用于由内自外的旋转对象
+	Cull Off ?? 显示所有面。用于特殊效果。
+    语句之二：ZWrite On | Off
+	此语句用于控制是否将来之对象的像素写入深度缓冲（默认开启），如果需要绘制纯色物体，便将此项打开，也就是写上ZWrite On。如果要绘制半    透明效果，关闭深度缓冲，则用ZWrite Off。
+    语句之三：ZTest Less |Greater | LEqual | GEqual | Equal | NotEqual | Always
+	此语句用于控制深度测试如何执行。
+    缺省值是LEqual （绘制和存在的对象一致或是在其中的对象；隐藏其背后的对象），含义列举对应如下：
+	Greater 只渲染大于AlphaValue值的像素
+	GEqual 只渲染大于等于AlphaValue值的像素
+	Less 只渲染小于AlphaValue值的像素
+	LEqual 只渲染小于等于AlphaValue值的像素
+	Equal 只渲染等于AlphaValue值的像素
+	NotEqual 只渲染不等于AlphaValue值的像素
+	Always 渲染所有像素，等于关闭透明度测试。等于用AlphaTest Off
+	Never 不渲染任何像素
+
+    语句之四：Offset Factor ,Units
+	此语句用两个参数（Facto和Units）来定义深度偏移。
+	Factor参数表示 Z缩放的最大斜率的值。
+	Units参数表示可分辨的最小深度缓冲区的值。
+	于是，我们就可以强制使位于同一位置上的两个集合体中的一个几何体绘制在另一个的上层。例如偏移量Offset 设为0, -1（即Factor=0,     Units=-1）的值使得靠近摄像机的几何体忽略几何体的斜率，而偏移量为-1,-1（即Factor =-1, Units=-1）时，则会让几何体偏移一个微小的角度，让    观察使看起来更近些。
+
+八、Alpha测试（Alpha testing）相关内容讲解
+    语句之一：AlphaTest Off                 
+	此语句用于渲染所有像素（缺省）
+    语句之二：AlphaTest comparison AlphaValue
+	此语句用于设定透明度测试只渲染在某一确定范围内的透明度值的像素。其中的comparison取值为下表之一：
+
+	Greater Only render pixels whose alpha is greater than AlphaValue. 大于
+	GEqual Only render pixels whose alpha is greater than or equal to AlphaValue. 大于等于
+	Less Only render pixels whose alpha value is less than AlphaValue. 小于
+	LEqual Only render pixels whose alpha value is less than or equal to from AlphaValue. 小于等于
+	Equal Only render pixels whose alpha value equals AlphaValue. 等于
+	NotEqual Only render pixels whose alpha value differs from AlphaValue. 不等于
+	Always Render all pixels. This is functionally equivalent to AlphaTest Off. 
+	渲染所有像素，等于关闭透明度测试AlphaTest Off
+	Never Don't render any pixels. 不渲染任何像素
+	而AlphaValue为一个范围在0到1之间的浮点值。也可以是一个指向浮点属性或是一个范围属性，在后一种情况下需要使用标准的方括号写法标注索    引名字，如([变量名]).
+
+九、基本雾效（Fog）设置
+
+    语句之一：Fog { FogCommands }
+	此语句用于设定雾命令的内容，具体的填在大括号之中的内容见下面的语句。
+    语句之二：Mode Off | Global | Linear | Exp | Exp2
+	此语句用于定义雾模式。缺省是全局的，依据雾在渲染设定中是否打开确定可从无变化到平方值
+    语句之三：Color ColorValue
+	此语句用于设定雾的颜色值。
+    语句之四：Density FloatValue
+	此语句以指数的方式设定雾的密度
+    语句之五：Range FloatValue , FloatValue
+	此语句用于为linear类型的雾设定远近距离值。
+
+十、Blend代号可选择的选项:
+|---------------------------------------------------------------|
+|	选项代号	|	与之等价的代码			|
+|---------------------------------------------------------------|
+|One			|float4(1.0)=>float4(1.0,1.0,1.0,1.0)	|
+|---------------------------------------------------------------|
+|Zero			|float4(0.0)				|
+|---------------------------------------------------------------|
+|SrcColor		|fragment_output			|
+|---------------------------------------------------------------|
+|SrcAlpha		|float4(fragment_output.a)		|
+|---------------------------------------------------------------|
+|DstColor		|pixel_color				|
+|---------------------------------------------------------------|
+|DstAlpha		|float4(pixel_color.a)			|
+|---------------------------------------------------------------|
+|OneMinusSrcColor	|float4(1.0)-fragment_output		|
+|---------------------------------------------------------------|
+|OneMinusSrcAlpha	|float4(1.0-fragment_output.a)		|
+|---------------------------------------------------------------|
+|OneMinusDstColor	|float4(1.0)-pixel_color		|
+|---------------------------------------------------------------|
+|OneMinusDstAlpha	|float4(1.0-pixel_color.a)		|
+|---------------------------------------------------------------|
+
+//注意细节
+Tags{"LightMode"="ForwardBase"}当场景只有一个光源时使用"ForwardBase";
+当再添加一个平行光，需再添加一个Pass,标记为"ForwardAdd",同时将Quality中Pixcel Light Count设置2
+
+//UnityShader入门精要
+https://github.com/candycat1992/Unity_Shaders_Book

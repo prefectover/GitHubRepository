@@ -1,0 +1,169 @@
+一、unity预编译指令 path在相应平台对应的路径
+unity_android		用于安卓开发
+	path = "jar:file://" + Application.dataPath + "!/assets";
+unity_iphone		用于iphone开发
+	path = Application.dataPath + "/Raw/";
+unity_standalone_win	window开发
+unity_editor		用于编辑器
+unity_webplayer		用于webplayer开发
+	path = "flie://"+ Application.dataPath + "/StreamingAssets/";
+
+二、UGUI
+	Unity UI 系统使用 RectTransform 实现基本的布局和层次控制。
+	RectTransform 继承于 Transform，所以 Transform 的所有特征 RectTransform 同样拥有。在 Transform 基础上，RectTransform 增加了 轴心（pivot）、锚点（实际上是用 anchorMin、anchorMax 两个点定义的矩形区域）、和 尺寸变化量（sizeDelta）。
+	轴心：表示UI元素的中心，使用相对于自身矩形范围的百分比表示的点位置，这会影响定位、缩放和旋转。
+	锚点：相对于父级矩形的子矩形区域，这个矩形各个边界值使用百分比表示。
+	尺寸变化量：相对锚点定义的子矩形的大小变化量，与锚点定义的子矩形合并后的区域才是最终的UI矩形。
+	在 Inspector 界面上，为了更方便的调节 RectTransform 的属性，锚点的两个点重合时会显示位置和宽高（直接调节位置和sizeDelta），否则显示相对锚点矩形边界的偏移量（通过计算后再赋值给位置和sizeDelta）。在程序中，RectTransform 添加了 anchoredPosition 和 rect 属性来更方便的编程。
+	RectTransform 组件同样负责组织 GameObject 的层级关系。在 UI 系统中，子级 UI 对象总是覆盖显示在父级 UI 对象上；层级相同的 UI 对象，下方的 UI 对象总是覆盖显示在上方的 UI 对象上。这样的设计避免了繁琐的深度设置。在程序中，Transform 添加了 SetSiblingIndex、GetSiblingIndex、SetAsFirstSibling、SetAsLastSibling 这些方法来方便的修改物体的层级顺序。
+
+	EventSystem
+
+	如果你使用 UI 系统，那么 EventSystem 对象会自动创建。这个对象负责监听用户输入。默认情况下，在电脑上可以使用键盘和鼠标输入，在移动设备上可以使用触摸输入。但是如果你要为surface这样的设备开发，你也可以同时启用两种输入。当需要屏蔽用户输入时，将此对象关闭即可。UnityEngine.EventSystems.EventSystem.current 保存了当前活动的 EventSystem 对象。
+	
+	Canvas
+
+	Canvas 是其他所有 UI 对象的根。在一个场景里 Canvas 数量和层级都没有限制。子 Canvas 使用与父 Canvas 相同的渲染模式。一个 Canvas 有三种渲染模式：
+	Screen Space - Overlay：UI元素相对于屏幕空间，以2D方式显示在任何相机画面的上面。这是非常标准的 UI 风格。典型例子：大量窗口、文本和按钮的策略游戏。
+	Screen Space - Camera：UI元素相对于屏幕空间，由指定的相机负责显示，相机的参数影响显示的结果。你可以把 Canvas 理解为相机的子物体。典型例子：射击游戏屏幕上的 3D HUD。
+	World Space：UI元素相对于世界空间，和其他场景里的物体一样有世界位置、遮挡关系。通常用来做非常创新的 UI 设计。例子：游戏内的手机屏幕、与场景绑定的游戏指导等。
+	CanvasScaler
+
+	这个组件负责屏幕适配。UI 系统使用 RectTransform 来计算 UI 的位置和大小，但这还不够。如何让设计的 UI 可以适配不同的分辨率、宽高比和 DPI？这个组件给出了以下3种适配方法，注意任何一种适配方法都不会改变UI的宽高比和相对定位。
+
+	Constant Pixel Size：通过调节 Canvas 像素大小来维持缩放不变。它的意思是在任何屏幕上不改变 Canvas 的缩放系数（Scale Factor），而是调节 Canvas 的像素大小与屏幕保持一致。你可以手动或通过代码调节 Canvas 的缩放系数。这是 UI 系统默认的适配方案。如下图两种分辨率下相同的UI显示的不同之处，虽然不同屏幕下UI元素定位、大小没有发生变化（图中两个白色元素定位分别为屏幕左上角和右下角），但是较小的屏幕上UI元素占用了大部分屏幕空间，显得更拥挤。这就是这种适配方式的缺点，小屏幕太拥挤、大屏幕太空旷，没有考虑到屏幕的分辨率和DPI。但是这种模式的好处是UI元素可以保持设计时的细节（因为没有缩放）。这种模式可能适用于：你希望UI在一定范围内按原始大小显示，这样既可以让UI显示的尽可能清晰、又可以让屏幕较大的玩家拥有更广阔的视野，但是在太小或太大的屏幕上，你可以通过程序来调节缩放系数，不至于小屏幕被UI占满、大屏幕找不到UI。
+
+	Scale With Screen Size：根据屏幕分辨率缩放。这可能是大部分游戏最方便的适配方法。在这种模式下，你需要指定一种设计分辨率，然后指定缩放的算法。无论哪种缩放算法，如果实际宽高比与设计宽高比相同，UI 都会被等比缩放。实际上，Canvas 只是保持自己的大小和设计分辨率一致。如果实际宽高比与设计宽高比不同，这时缩放算法才会影响显示结果。缩放算法有三种：扩展、收缩 和 匹配宽高。扩展算法的逻辑是，扩大 Canvas （在宽高比上）较短的一边，使得 Canvas 宽高比与屏幕一致。如下左图，设计分辨率宽高比为1：1（红色线框），实际屏幕更宽所以 Canvas 的 width 增加以匹配屏幕。这样的算法在宽高比不同的屏幕上将始终导致UI更“开阔”。收缩算法的逻辑是，收缩 Canvas （在宽高比上）较长的一边，使得 Canvas 宽高比与屏幕一致。如下中图，设计分辨率宽高比为1：1（红色线框），实际屏幕更窄所以 Canvas 的 height 减小以匹配屏幕。这样的算法在宽高比不同的屏幕上将始终导致UI更“紧凑”。匹配宽高的算法逻辑是，根据指定的权重，同时调节 Canvas 的宽和高，使得 Canvas 宽高比与屏幕一致。如下右图，设计分辨率为红色线框，设定宽度和高度的权重相等（0.5），实际屏幕上 Canvas 的宽和高都被调整以匹配屏幕。这样的算法目的是，通过可调节的宽高权重，尽可能的保持UI的原始设计。
+	Constant Physical Size：通过调节 Canvas 物理大小来维持缩放不变。它的意思是在任何屏幕上不改变 Canvas 的 DPI，而是调节 Canvas 的物理大小总是与屏幕保持一致。这种说法可能比 Constant Pixel Size 更难以理解，实际上他们本质是一样的，只不过 Constant Pixel Size 通过逻辑像素大小调节来维持缩放，而 Constant Physical Size 通过物理大小调节来维持缩放。使用这种模式必须指定一个像素转换物理大小的因数（填写96方便在windows上进行开发）。运行时通过具体设备报告的dpi计算 Canvas 像素大小和缩放系数。这种模式从设计的意图来看，是为了在开发时使用物理单位而非像素单位，这只会让程序和美术的工作变得复杂，实际使用价值并不高。因为开发人员更关心设计的像素分辨率，他们需要绘制明确的像素大小的图片！如果未来开发人员和玩家都使用了超高DPI的显示器，那时或许会更注重物理尺寸。
+	Selectable
+
+	可交互UI组件的基类。它负责响应用户的输入，产生视觉变化、切换导航目标 以及 处理通用的UI事件。
+	Transition：可交互组件有4种视觉状态：正常（normal）, 高亮（highlighted）, 按下（pressed）和 禁用（disabled）。Selectable 根据用户的输入和自己当前的状态执行状态切换，切换状态的视觉效果有4种类型：none、color tint、sprite swap 和 animation。使用 animation 效果必须再添加一个 animator 组件，此动画控制器含有上述4种状态。可以通过Auto Generate Animation 按钮自动添加组件并创建动画控制器。
+	Navigation：可以使用键盘和游戏控制器切换导航目标，如果你要开发一个仅使用游戏控制器就可以玩的游戏（主机游戏），那么这个功能非常重要，因为玩家没有鼠标也无法使用触摸屏，只能通过按钮来切换导航目标。这个功能被设计的非常完善，以至于你几乎什么都不用做就可以处理的很好。一共有5种导航选项：不使用（None）、水平（Horizontal）、垂直（Vertical）、自动（Automatic）、显式指定（Explicit）。在非显式指定的情况下，导航系统根据每个UI元素的矩形位置和大小，自动查找4个方向上是否存在最合适的切换目标。如果选择显式指定，需要为4个方向指定切换目标（Selectable）。在Inspector 界面点击 Visualize 按钮可以查看导航路径（下图中的黄色线条），在 EventSystems 中可以设置默认选中的对象。
+	通用事件：OnSelect, OnDeselect, OnPointEnter, OnPointExit, OnPointDown, OnPointUp, ... 。重写这些方法来定义自己的可交互组件。文末将通过一个例子来说明如何实现自定义控件。
+
+	Auto Layout
+	自动布局用于简化UI的布局工作。自动布局基于 RectTransform 的布局系统，包含 布局元素（Layout Elements） 和 布局控制器（Layout Controllers）两个概念。
+
+      布局元素含有 最小尺寸、首选尺寸 和 可选尺寸 这些参数，布局控制器根据这些参数来调整布局元素的大小和位置。布局控制器调整的基本原则是：首先分配最小尺寸，然后如果还有足够空间就分配首选尺寸，最后如果还有空间则分配可选尺寸。一个含有 RectTransform 组件的游戏对象就是一个布局元素。添加某些组件会修改布局元素的参数。LayoutElement 是一个用来修改默认布局参数的组件。布局控制器以多种组件的形式存在，它们控制自身或子级的布局元素的大小和位置。关于各种布局控制器组件的功能和使用方法请参考 Unity 文档。
+	Rich Text
+
+	默认情况下一个 Text 组件以单一样式显示所有文本，使用富文本可以让显示样式更丰富，比如高亮部分文本。实际上，富文本功能不仅可以用在 UI 系统，还可以用在 Legacy GUI 系统 和 Debug 中。
+	富文本使用方法类似 html 标签，比如 "<b>Hello</b>" 将显示为加粗的 "Hello"。这些标签还可以嵌套使用。可用的标签有 b（加粗）、i（倾斜）、size（大小）和 color （颜色）。其中 size 和 color 必须指定属性值，如："<size=50>Hello</size>" "<color=#FF0080FF>Hello</color>"。size 属性的单位是像素，color 属性使用RGBA格式的16进制表示颜色或直接填写常用颜色名称。下图为使用示例
+	如果使用 TextMesh，还可以使用 material 和 quad 标签。material 需要指定 material 数组中的 material 下标，如 "<material=1>Cool</material>"；quad 标签没有结束标签，通常用来在文本中显示一个图片，如 "This is me: <quad material=2 size=24 x=0 y=0 width=1 height=1 />"。
+
+	Event
+	一个可序列化的、可显示在 Inspector 上的事件类型。典型的用途就是 Button 的 OnClick 事件。拖拽一个对象或组件到方框中，就可以选择事件触发时调用的方法。可选方法必须是公开的、无返回值的、含有0个或1个可序列化的参数。也可以调用 set 类型的属性。你也可以在自己的脚本里使用 UnityEvent，只要定义一个序列化的字段，就可以和 OnClick 看起来一样了！
+	Event 可以通过代码添加、移除或调用方法。和 C# 的 delegate 相似。另外还有泛型版本的 UnityEvent，最多支持 4 个参数，但是实用价值不大，因为你需要自己实现编辑器来保存参数。
+
+蓝图模式(“虚线方框”按钮)
+	表示是否忽略掉物体的旋转。点开不能对物体进行旋转。
+RawEdit模式(“R”字按钮)
+	表示当修改Anchor时UI的位置及尺寸是否会根据Anchor进行匹配，点开可以进行匹配。
+
+
+三、Unity自定义的标签(在类名上面)
+	[Serializable]序列化
+	[MenuItem("CreateAsset/Asset")]在unity菜单中显示功能
+	[CustomEditor(typeof(Bullet))]自定义Inspector显示
+	[HideInInspector]隐藏在Inspector显示
+	[RequireComponent(typeof(FingerDownDetector))]可以防止某些类漏加的情况
+	[InitializeOnLoad]让unity立即执行操作，而不必用户点击
+
+四、特殊文件夹
+1.Editor
+
+Editor文件夹可以在根目录下，也可以在子目录里，只要名子叫Editor就可以。比如目录：/xxx/xxx/Editor  和 /Editor 是一样的，无论多少个叫Editor的文件夹都可以。Editor下面放的所有资源文件或者脚本文件都不会被打进发布包中，并且脚本也只能在编辑时使用。一般呢会把一些工具类的脚本放在这里，或者是一些编辑时用的DLL。 比如我们现在要做类似技能编辑器，那么编辑器的代码放在这里是再好不过了，因为实际运行时我们只需要编辑器生成的文件，而不需要编辑器的核心代码。
+
+2.Editor Default Resources
+
+Editor Default Resources注意中间是有空格的，它必须放在Project视图的根目录下，如果你想放在/xxx/xxx/Editor Default Resources 这样是不行的。你可以把编辑器用到的一些资源放在这里，比如图片、文本文件、等等。它和Editor文件夹一样都不会被打到最终发布包里，仅仅用于开发时使用。你可以直接通过EditorGUIUtility.Load去读取该文件夹下的资源。
+
+1
+2
+		TextAsset text = 	EditorGUIUtility.Load("test.txt")as TextAsset;
+		Debug.Log(text.text);
+3.Gizmos
+
+我觉得这个文件夹其实没什么用处，如下代码所示它可以在Scene视图里给某个坐标绘制一个icon。它的好处是可以传一个Vecotor3 作为图片显示的位置。 参数2就是图片的名子，当然这个图片必须放在Gizmos文件夹下面。
+
+1
+2
+3
+    void OnDrawGizmos() {
+        Gizmos.DrawIcon(transform.position, "0.png", true);
+    }
+如果只想挂在某个游戏对象身上，那么在Inspecotr里面就可以直接设置。。
+
+Unity3D研究院之手游开发中所有特殊的文件夹 - 雨松MOMO程序研究院 - 2
+这里还是要说说OnDrawGizmos()方法，只要脚本继承了MonoBehaviour后，并且在编辑模式下就会每一帧都执行它。发布的游戏肯定就不会执行了，它只能用于在scene视图中绘制一些小物件。比如要做摄像机轨迹，那么肯定是要在Scene视图中做一个预览的线，那么用Gizmos.DrawLine 和Gizmos.DrawFrustum就再好不过了。
+
+4.Plugins
+
+如果做手机游戏开发一般 andoird 或者 ios 要接一些sdk 可以把sdk依赖的库文件 放在这里，比如 .so .jar .a 文件。这样打完包以后就会自动把这些文件打在你的包中。
+
+5.Resources
+
+可以在根目录下，也可以在子目录里，只要名子叫Resources就可以。比如目录：/xxx/xxx/Resources  和 /Resources 是一样的，无论多少个叫Resources的文件夹都可以。Resources文件夹下的资源不管你用还是不用都会被打包进.apk或者.ipa
+
+Resource.Load ：编辑时和运行时都可以通过Resource.Load来直接读取。
+
+Resources.LoadAssetAtPath() ：它可以读取Assets目录下的任意文件夹下的资源，它可以在编辑时或者编辑器运行时用，它但是它不能在真机上用，它的路径是”Assets/xx/xx.xxx” 必须是这种路径，并且要带文件的后缀名。
+
+AssetDatabase.LoadAssetAtPath()：它可以读取Assets目录下的任意文件夹下的资源，它只能在编辑时用。它的路径是”Assets/xx/xx.xxx” 必须是这种路径，并且要带文件的后缀名。
+
+我觉得在电脑上开发的时候尽量来用Resource.Load() 或者 Resources.LoadAssetAtPath() ，假如手机上选择一部分资源要打assetbundle，一部分资源Resource.Load().那么在做.apk或者.ipa的时候 现在都是用脚本来自动化打包，在打包之前 可以用AssetDatabase.MoveAsset()把已经打包成assetbundle的原始文件从Resources文件夹下移动出去在打包，这样打出来的运行包就不会包行多余的文件了。打完包以后再把移动出去的文件夹移动回来。
+
+6. StreamingAssets
+
+这个文件夹下的资源也会全都打包在.apk或者.ipa 它和Resources的区别是，Resources会压缩文件，但是它不会压缩原封不动的打包进去。并且它是一个只读的文件夹，就是程序运行时只能读 不能写。它在各个平台下的路径是不同的，不过你可以用Application.streamingAssetsPath 它会根据当前的平台选择对应的路径。
+
+有些游戏为了让所有的资源全部使用assetbundle，会把一些初始的assetbundle放在StreamingAssets目录下，运行程序的时候在把这些assetbundle拷贝在Application.persistentDataPath目录下，如果这些assetbundle有更新的话，那么下载到新的assetbundle在把Application.persistentDataPath目录下原有的覆盖掉。
+
+因为Application.persistentDataPath目录是应用程序的沙盒目录，所以打包之前是没有这个目录的，直到应用程序在手机上安装完毕才有这个目录。
+
+StreamingAssets目录下的资源都是不压缩的，所以它比较大会占空间，比如你的应用装在手机上会占用100M的容量，那么你又在StreamingAssets放了一个100M的assetbundle，那么此时在装在手机上就会在200M的容量。
+
+六、技巧
+Debug.Log("string", Object);的作用是点击Console面板的记录,会显示你要打印的Object位置
+
+七、命令行起动
+
+Unity.exe -projectPath E:\my_project\testProject -quit -batchmode -executeMethod MyEditorScript.RunTest
+Unity命令行参数解释：
+-batchmode
+   在 批处理模式下运行Unity。应始终与其他命令行参数一起使用，因为它确保不会弹出窗口，无需任何人为的干预。当脚本代码在执行过程中发生异常，资源服务 器更新失败或其他操作失败时Unity将立即退出，并返回代码为1。请注意，在批处理模式下， Unity将向控制台发送输出版本最小的日志。当然，日志文件将包含完整的日志信息。
+-quit
+   其他命令执行完毕后将退出Unity编辑器。请注意，这可能会导致错误消息被隐藏（但他们将显示在Editor.log文件）
+-buildWindowsPlayer <pathname>
+   建立一个单独的Windows游戏（例如：-buildWindowsPlayer path/to/your/build.exe）
+-buildOSXPlayer <pathname>   建立Mac游戏（例如：-buildOSXPlayer path/to/your/build.app）-importPackage <pathname>
+   导入提供的package，不会显示导入对话框
+-createProject <pathname>
+   根据提供的路径建立一个空项目
+-projectPath <pathname>
+   打开指定路径的项目
+-logFile <pathname>
+   指定将要被写入编辑的log文件
+-assetServerUpdate <IP[:port] projectName username password [r <revision>]>
+   可 通过ip端口强制更新资源服务器的项目。端口是可选的，如果不是的话可以假定一个标准端口（10733）。最好使用此命令配合- projectpath参数确保你在正确的项目里工作。如果没有提供项目名字是那么就是最后一个Unity打开的项目。如果没有选择项目的路径则由- projectpath自动创建。
+-exportPackage <exportAssetPath exportFileName>
+   根 据路径导出package。exportAssetPath是一个文件夹（相对Unity项目的根目录）为了导出Unity项目并且 exportFileName是package的名称。目前，此选项只能在同一个时间导出整个文件夹。这个命令通常需要使用- projectpath参数
+-nographics (Windows only)
+   当运行在批处理模式，不会初始化显卡设备。这使得它可以在你的机器上自动按工作流程运行，甚至它没有GPU。
+-executeMethod <ClassName.MethodName>
+   在 Unity启动的同时会执行静态方法，该项目是开放的并且是在可选资源服务器更新完成之后。这可以用来不断的整合，进行单元测试，制作模型，准备一些数据 等。如果你想通过命令行返回一个错误，你可以抛出一个异常，会引发代码为1的Unity关闭或其他引发EditorApplication.Exit非零 代码。使用executeMethod，你需要在编辑文件夹有一个脚本并且类里有一个静态函数。
+-batchmode
+   在"headless"模式下运行游戏。游戏将不显示任何内容，或接受用户输入。这对运行网络游戏的服务器有很大的作用的。
+-force-opengl (Windows only)
+   让游戏使用OpenGL进行渲染，即使有可用的Direct3D。通常情况是使用Direct3D，但如果是Direct3D 9.0c的不可用的话则会选用OpenGL。
+-single-instance (Windows only)
+   在同一时候只允许一个游戏实例运行。如果另一个实例已在运行，然后再次通过 -single-instance启动它的话会调节到现有的这个实例。
+-nolog (Windows only)
+   不产生输出日志。 通常output_log.txt被写在游戏输出目录下的*_Data文件夹中 ，在debug.log中打印输出的地方。
+-force-d3d9-ref (Windows only)
+   使游戏运行在Direct3D的"Reference"软件渲染模式，必须要安装DirectX SDK才能使其工作。这主要是用于建立自动化测试对象，这样您可以确保不管是使用什么显卡，其渲染效果是完全一样的。
+-adapter N (Windows only)
+   允许游戏全屏运行在另一台显示器上，其中N表示显示的号码。
+-popupwindow (Windows only)
+   这个窗口将以弹出的方式创建（没有框架）

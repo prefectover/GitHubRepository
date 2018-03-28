@@ -1,0 +1,29 @@
+SQL的DML部分:(数据操作语言DML)
+    1.SELECT        select-从数据库表中获取数据
+        用法: SELECT 列名1，列名2 FROM 表名称;
+    2.UPDATE        update-更新数据库表中的数据
+        用法: UPDATE 表名称 SET 列名称1 = 新值,列名称2 = 新值 WHERE 列名称 = 某值
+    3.DELETE        delete-从数据库表中删除数据
+        用法: DELETE FROM 表名称 WHERE 列名称 = 值
+        删除所有 DELETE FROM 表名 或 DELETE * FROM 表名
+    4.INSERT INTO   insert into-向数据库表中插入数据
+        用法: INSERT INTO 表名称 VALUES(值1，值2，...)
+        也可以 INSERT INTO 表名称(列1，列2) VALUES(值1，值2,...)
+
+SQL的DDL部分:(数据定义语言DDL)
+    1.CREATE DATABASE    create database-创建数据库
+    2.ALTER　DATABASE    alter database-修改数据库
+    3.CREATE TABLE      create table-创建新表
+    4.ALTER TABLE       alter table-更改数据库表
+    5.DROP TABLE        drop table-删除表
+    6.CREATE INDEX      create index-创建索引(搜索键)
+    7.DROP INDEX        drop index-删除索引
+
+SQL语法
+    注释: --你的内容
+    *: 选择所有
+    FROM: from对应表
+    WHERE: where过滤条件
+    AND: 或同&&
+    OR: 与同||
+    ORDER BY: order by对结果进行排序，默认升序，使用DESC(desc)是降序
