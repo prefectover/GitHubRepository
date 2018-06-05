@@ -1,0 +1,2 @@
+1.启用IIS，万维网服务->启用应用程序开发功能->CGI
+1.复制D:\php\php5ts.dll到C:\Windows\system32
