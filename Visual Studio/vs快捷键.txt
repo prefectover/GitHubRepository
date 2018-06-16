@@ -1,0 +1,8 @@
+1.对齐
+    (ctrl + k) + (ctrl + d)
+2.注释
+    ctrl + k + c
+    取消
+    ctrl + k + u
+3.快速选择上一个脚本
+    ctrl + tab
