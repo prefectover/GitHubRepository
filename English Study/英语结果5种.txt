@@ -1,0 +1,80 @@
+一、结构一 -- 主谓结构
+    名词 + 动词
+    主语: 名词 n
+    谓语: 动词 v
+
+    他    死了。
+    主[n] 谓[v]
+    He died.
+
+    网络任务 不见了。
+    主[n]   谓[v]
+    The network tasks disappeared.
+
+    形容词: adj. 美丽的
+    副词: adv. 突然地 突然
+    adj + 主 + 谓 + adv + 时间 + 地点
+
+    刚才，一个年轻的女孩 突然  在浴室里 晕倒了。
+    时间 主[n]          adv  地点     谓[v]
+    A young gril fainted suddenly in the bathroom just now.
+
+    5     1         3     4          2
+    昨晚，一个年轻人 神秘地 在这家酒店 身亡了。
+    时间  物[主语]  adv    地点      动作[谓语] 
+    A young man died 
+
+    动词 v 分为
+    vt 及物动词 vt + n 涉及物体的动词  必须接名词
+    vi 不及物动词 -- 主谓结构只能接不及物动词 *
+    及 涉及  物  物体  动词
+
+二、结构二 -- 主谓宾结构
+    名词 + 动词 + 名词
+    we 主格 -> 主语的位置
+    us 宾格 -> 宾语的位置
+
+    他    利用了  我们。
+    主[n] 谓[vt]  宾[n]
+    He used us.
+    我女朋友 把 我    甩了。
+    主[n]      宾[n] 谓[vt]
+    My grilfriend dumped me.
+    vi + 介词[必须] + 宾
+
+    频率副词 放谓语前
+    普通副词 放宾语后
+
+    如: 我    经常      听     鬼故事。
+        主[n] 频率[adv] 谓[vi] 宾[n]
+        I often listen to ghost stories.(listen是vi,所以要加介词 to)
+
+        他老婆 经常      在公开场合 大声地     吼     他。
+        主[n]  频率[adv] 地点       普通[adv] 谓[vi] 宾[n]
+        His wife often shouts at him loudly in public.
+
+    小知识:
+    seventh:第七、七分之一的意思
+    ninth:第九、九分之一
+    3/7 => Three sevenths(复数)
+    1/2 => half 特例
+    1/4 => quarter 特例
+
+三、结构三 -- 主谓+间接宾语+直接宾语(主谓双宾)
+    通常是某人给某人某物
+    sb give sb sth 
+
+    在情人节那天 她  给了  我  她的初吻。
+    时间        sb  give  sb  sth
+    She gave me her first kiss on Valentine's Day.
+
+    小知识: at + 时刻
+            on + 天
+            in > 天 在1945年使用in 
+            1945年9月 in 1945.9.2 in  1945.9.2 9点 on  
+            1945年9月2日 9点某刻 at
+
+    他的父母  给    他  留下了  很多钱。
+    sb       leave sb  ...    sth
+    His parents left him a lot of money.
+

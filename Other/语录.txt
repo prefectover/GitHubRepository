@@ -1,0 +1,4 @@
+	其实，谁喜欢你，你能感觉得到，你喜欢谁，他对你爱不爱，在不在意，你也能感觉到。有时候，聪明如你，但傻就傻在习惯欺骗自己，承诺了不该给的承诺，坚持了没必要的坚持。爱情这件事，勉强不了，住不进你心里的人就放他走，你走不进的世界提前先掉头。
+	如果不是相互喜欢，你的痴情就是别人的负担
+	虚拟WiFi网卡： 运行命令：netsh wlan set hostednetwork mode=allow ssid=hgmPC key=hgaoming
+	mysqld install MySQL --defaults-file="C:\CommonSoft\mysql-5.7.15-winx64\my.ini"

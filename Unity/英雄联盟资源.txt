@@ -1,0 +1,11 @@
+D:\英雄联盟\英雄联盟\Air\assets\images\itemall  道具目录
+D:\英雄联盟\英雄联盟\Air\assets\images\championScreens 技能目录
+mars-stone-gamesoftware@hotmail.com
+Sprite：标准Sprite控件，自适应图片大小。
+Sliced Sprite：一个含有9个切片的Sprite,创建固定边框的控件最佳选择，固定大小，不会随图片大小而改变，可做人物头像等。
+Tiled Sprite：一个Sprite缩放填充整个区域。如背景由同一元素图片构成可用此控件
+Filled Sprite: 每个Sprite都会有一个单独的参数（fill Amount）来控制哪些是可见的,可用来做进度条或者滚动条，血条。
+
+gameObject.active：是否在场景中停用该物体，在你gameObject.active =false中，则你在场景中用find找不到该物体。如果该物体有子物体，你要用SetActiveRecursively(false) 来控制是否在场景中停用该物体。
+GameObject.Destroy()：表示移除物体或物体上的组件，代表销毁该物体，实际上该物体的内存并没有立即释放，而是在你下下个场景中槽释放内存资源，就是你a场景中Destroy了 一般是在c场景中才真正释放该物体的内存资源。
+gameObject.renderer.enabled：是控制一个物体是否在屏幕上渲染或显示，而物体实际还是存在，只是相当于隐身，而物体本身的碰撞体还依然存在的。

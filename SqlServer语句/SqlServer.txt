@@ -230,3 +230,10 @@
     SELECT datename(d, '2010-07-15') --获取年月日 灵活
     rank() over (order by col_name) --排名
     SELECT rank() over (order by 高考分数 desc) as 名次, 高考分数 FROM t_name
+
+将MSSQLLocalDB数据库支持中文
+    ALTER DATABASE t_name SET SINGLE_USER WITH ROLLBACK IMMEDIATE
+    GO
+    ALTER DATABASE t_name COLLATE Chinese_PRC_CI_AS
+    GO
+    ALTER DATABASE t_name SET MULTI_USER

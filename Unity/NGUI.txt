@@ -1,0 +1,177 @@
+一、 NGUI的直接用法
+
+1. Attach a Collider：表示为NGUI的某些物体增加碰撞器，如果界面是用NGUI做的，只能如许增多。（注：用Component增进无效）。
+
+2. Attach an Anchor：表示为该物体增多了UIAnchor脚本，劝化是防御像素偏移的标题
+
+3. Attach UIStretch：显露为该物体增多了UIStretch脚本，供应缩放苦守
+
+4. Make Pixel Perfect：显露踊跃为你斡旋Transform的尺寸
+
+5. Create a Panel：浮现竖立一个面，相当于一个容器，里面的Button,Label,CheckBox控件悉数采集在Panel内里
+
+6. Create a Widget：体现建树一个窗口小部件，比如Button,Label,Sprite等
+
+7. Create a New UI：体现创设一个新的UI界面
+
+8. Font Maker：设立字体
+
+9. Atlas Maker：创设图集
+
+二、对于组件（Component）> NGUI > Examples下的感化
+
+1.PanWithMouse，浮现你赋予的该物体会依据鼠标的转变而移动（沉没的感触）
+
+2.LookAtTarget，透露表现该物体朝向你的目的物体（Target）
+
+3.LoadLevelOnClick，显现点击按钮后加载到其它一个场景，在LevelName写上你所要加载的场景名就可
+
+4.Spin，旋转
+
+5.SpinWithMouse，随着鼠标旋转
+
+6.TypewriterEffect，浸染于标签，打字气概
+
+7.Chat Input，将输出框里面的模式提交到文本框里面去
+
+三、关于组件（Component）> NGUI > Interaction下的作用
+
+1.Button:
+
+A:UIButton:鼠标放到按钮上，旋转指标物体的色调
+
+B:UIButtonScale:鼠标放到按钮上，指标物体变大或放大，在Hover下调理x，y，z的比例
+
+C:UIButtonOffset:鼠标放到按钮上，目的物体移动身分
+
+D:UIButtonSound:鼠标点击按钮，发出声响
+
+E:UIButtonActivate:鼠标点击按钮后，目的物体由禁用状态到启用状态（触发该物体）
+
+F:UIButtonColor:鼠标移动至按钮后，目的物体变色调
+
+G:UIButtonRotation:鼠标移动至按钮后，指数物体旋转不一定的度数，在Hover下调治x,y,z旋转的度数
+
+H:UIButtonTween:鼠标点击了按钮后，目标物体孕育发生更换，必须给指标物体增长Tween组件内里的变幻（例：transform变更，position更换，Alpha变卦等等）,并在初阶enable指数物体的变卦，由于此更动是在点击鼠标后才发作，要否则就会在起头运转游戏的时刻，它就发作变更了
+
+I:UIButtonPlayAnimation:鼠标点击按钮后，目的动画播放（必需为目的物体添加Animation）
+
+J:UIButton Message:通报静态，写一个公共函数，申报你所要传递新闻的形式，将此脚本放到你的目标物体上，此后写上你所要通报动静的函数名字
+
+2.CheckBox：
+
+A：UICheckBox：用于多选框的决意与作废
+
+B：UICheckBoxControlledObject：如果勾销这个多选框的抉择，那末目标物体以及所有子物体悉数被禁用
+
+C：UICheckBoxControlledComponent：若增加此剧本到CheckBox中，若是决定了该多选按钮，那末此剧本的Target将被显示，若是不有决意该多选按钮，那么此脚本的Target将被暗藏
+
+3.Drag：
+
+A：UIDragCamera：为某个物体增进该组件，然后为Camera增多UIDraggableCamera组件，显示该摄像机允许被拖拽，今后将此摄像机放到UIDragCamera的目标摄像机下，拖拽该物体，摄像机的位子就会旋转
+
+B：UIDraggableCamera：表示该摄像机是同意被拖拽的
+
+C：UIDraggablePanel：显示该面（容器）是准许被拖拽的
+
+D：UIDragObject：拖动该物体，被允许拖拽的物体会被拖拽，在此被允许拖动的物体必需放到指数物体之下
+
+E：UIDragPanelContents：体现该面的所有组件也是准许被拖拽的
+
+4.其他
+
+A：UIForward Events：展示从对象到另外一个转发事变（还须要详细相识）
+
+B：UIGrid：表示为该物体增多网格，在该物体下可以涵概良多的Item，在Arrangemwnt中可以决议竖直可以水准排列，Cell Width与Cell Height代表每个单位格的宽度与高度
+
+C：UICenterOnChild：常用于拖拽事项中，给Panel增长UIDraggablePanel剧本，此后给你想要拖拽的物体增进UIDragObject或者是UIDragPanelContents，从此给网格根目录增长UICenterOnChild，无论如何拖动容器里面的物体，网格不绝维持水准或垂直居中形状
+
+D：UIInputValidator：用于输出框中（Input），给输出框添加此脚本后，在Logic有多种决意，None代表没验证，任何字符都可以输出（汉语除外），Integer表现只能输出整数，不能输入英文以及种种特殊字符，Double展现只能输出浮点数，Alphanumeric显示甚么英文和数字和不凡字符均可以输入，Username闪现可以输入英文、数字，一些不凡字符（小数点除外），Name展示只能输入英文与非凡字符（小数点除外）
+
+E：UIPanelAlpha：可用于任何控件，增进此剧本给物体，在Alpha中可以调治参数，0表示全透明，0-1显现越来越不透明，1以上的数字闪现彻底不无色
+
+F：UIPopupList：用于下拉列表框（PopupList），经由NGUI建设PopupList控件时，就增加了此剧本，在Options中可以增加下拉列表框的子项
+
+G：UIScrollBar：用于转动条，Value体现目前转动条的位置，Size体现一个转动条的一个单位大小，Alpha显现滚动条的通明度，Direction可以选择转折条是垂直形状仍是水平状态
+
+H：UISlider：用于滑动框，Value表现此滑动框被加添的比例，Direction体现可以抉择滑动框是垂直的照样程度的
+
+I：UISoundVolume：用于Slider控件中……
+
+J：UITable：增长表格，Columns闪现此表格的列数，Down表现一列里面的控件从上往下分列，Up显示一列里面的控件从下往上分列，Padding展现各个控件的距离
+
+四、对付组件（Component）> NGUI > Tween下的感召
+
+1.Spring Position：显露变换物体的身分，Target是方针职位，物体会从开始的身分，移动到目的位子处
+
+2.Tween Alpha：显露物体的通明度从某一个值到另外一个值，From显示起源的值，To表示之后的值
+
+3.Tween Color：体现物体的色采从某一个值到另外一个值，From表现劈头的色采，To体现以后的色彩
+
+4.Tween Position：显现物体的坐标从一个地位到另外一个地位，From展示入手下手的位置，To闪现之后的职位
+
+5.Tween Rotation：展示物体从一个角度到另外一个角度的转变，From表示开端的角度，To闪现之后的角度
+
+6.Tween Scale：展现物体的大小从某一个值到另一个值的变动，From闪现劈头劈脸的大小，To显现之后的大小
+
+7.Tween Transform：显露物体的Transform更动，From展现入手下手的物体位子，To闪现之后的物体地位
+
+五、设立控件（NGUI > Create a Widget）
+
+A：成立标签：Label
+
+B：建设下拉列表框：Popup List
+
+C：设立进度条：Progress Bar
+
+D：成立滑动条：Slider
+
+E：树立输入框：Input
+
+F：建立动弹条：Scroll Bar
+
+G：树立按钮：Button
+
+H：树立多选框：CheckBox
+
+I：树立精灵：精灵也即是从一张大的图斥逐获取一个小的图片
+
+    Sprite：一般的精灵
+
+    Sliced Sprite：带有固定边框的精灵
+
+    Tiled Sprite：缩放反复填充整个区域的精灵（例如铁丝网）
+
+    Filled Sprite：每个城市有一个零丁的参数来管制那些可见的，常用于迁移转变条和进度条
+
+J：建树输出框：Input
+
+六、NGUI事情细碎
+
+NGUI事变函数可以写入NGUI控件剧本，或者带有碰撞器的物体（被带有UICamera组件的相机渲染）的脚本。
+
+常用事情：
+
+void OnHover (bool isOver)：鼠标悬停或移出时触发。悬停时传入true，移出时传入false。
+
+void OnPress (bool isDown):：鼠标或触摸按下或捏紧时触发，按下时传入true，抓紧时传入false。
+
+void OnClick()：鼠标或触摸单击（按下并拘留）时触发。
+
+void OnDoubleClick () ：双击（双击工夫间隔小于0.25秒）时触发。
+
+void OnSelect (bool selected)：相似单击，区别在于选中一次以后再选中将不再触发OnSelect事变，除非时代决定了其他控件。 
+     void OnDrag (Ve首席技术官r2 delta)：鼠标或触摸按下并移动时触发。delta为传入的位移。
+
+void OnInput (string text)：只用于输入控件，每次输入完成后触发，text传入本次输出的信息，而非输出控件中的文本信息。 
+     void OnTooltip (bool show)：鼠标悬停一段岁月或移开时触发，悬停时传入true，移开时传入false。
+
+void OnScroll (float delta)：鼠标中键转折时触发，delta为传入的动弹增量。
+
+七、经常使用相关变量
+
+UICamera.currentTouchID  UICamera类变量，用于判别鼠标按下的键位，-1为左键，-2为右键，-3为中键
+
+UICamera.lastHit      UICamera类变量，RaycastHit类型。用于得到被触发的物体。
+
+UICamera.lastTouchPosition    UICamera类变量，用于失去鼠标或触摸的职位。

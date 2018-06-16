@@ -1,0 +1,98 @@
+        APK文件结构和安装过程
+一、APK文件结构
+    Android应用是用Java编写的，利用Android SDK编译代码，并且把所有的数据
+和资源文件打包成一个APK (Android Package）文件，这是一个后缀名为.apk的压
+缩文件，APK文件中包含了一个Android应用程序的所有内容，是Android平台用于安
+装应用程序的文件。APK就是一个zip压缩包，解开这个APK包我们可以看到以下的结
+构：
+    assets目录      存放需要打包到APK中的静态文件
+    lib目录         程序依赖的native库
+    res目录         存放应用程序的资源
+    META-INF目录    存放应用程序签名和证书的目录
+    AndroidManifest.xml     应用程序的配置文件
+    classes.dex     dex可执行文件
+    resources.arsc  资源配置文件
+
+    1) assets目录：用于存放需要打包到APK中的静态文件，和res的不同点在于，assets
+目录支持任意深度的子目录，用户可以根据自己的需求任意部署文件夹架构，而且res
+目录下的文件会在.R文件中生成对应的资源ID，assets不会自动生成对应的ID，访问
+的时候需要AssetManager类。
+    2) lib目录：这里存放应用程序依赖的native库文件，一般是用C/C++编写，这里的lib
+库可能包含4中不同类型，根据CPU型号的不同，大体可以分为ARM，ARM-v7a，MIPS，X86，
+分别对应着ARM架构，ARM-V7架构，MIPS架构和X86架构，这些so库在APK包中的构成
+如下图Figure2：
+        armeabi目录    -->    libxxx.so
+        armeabi-v7a目录    --> libxxx.so
+        x86目录         -->     libxxx.so
+        mips目录        -->     libxxx.so
+    3) res目录：res是resource的缩写，这个目录存放资源文件，存在这个文件夹下的
+所有文件都会映射到Android工程的.R文件中，生成对应的ID，访问的时候直接使用资
+源ID即R.id.filename，res文件夹下可以包含多个文件夹，其中anim存放动画文件；
+drawable目录存放图像资源；layout目录存放布局文件；values目录存放一些特征值，
+colors.xml存放color颜色值，dimens.xml定义尺寸值，string.xml定义字符串的值，
+styles.xml定义样式对象；xml文件夹存放任意xml文件，在运行时可以通过
+Resources.getXML()读取；raw是可以直接复制到设备中的任意文件，他们无需编译。
+    4) META-INF目录：保存应用的签名信息，签名信息可以验证APK文件的完整性。AndroidSDK
+在打包APK时会计算APK包中所有文件的完整性，并且把这些完整性保存到META-INF文件夹下，
+应用程序在安装的时候首先会根据META-INF文件夹校验APK的完整性，这样就可以保证APK中
+的每一个文件都不能被篡改。以此来确保APK应用程序不被恶意修改或者病毒感染，有利于
+确保Android应用的完整性和系统的安全性。META-INF目录下包含的文件有CERT.RSA，
+CERT.DSA，CERT.SF和MANIFEST.MF，其中CERT.RSA是开发者利用私钥对APK进行签名的签
+名文件，CERT.SF，MANIFEST.MF记录了文件中文件的SHA-1哈希值。
+    5) AndroidManifest.xml：是Android应用程序的配置文件，是一个用来描述Android
+应用“整体资讯”的设定文件，简单来说，相当于Android应用向Android系统“自我介绍”的
+配置文件，Android系统可以根据这个“自我介绍”完整地了解APK应用程序的资讯，每个
+Android应用程序都必须包含一个AndroidManifest.xml文件，且它的名字是固定的，不能
+修改。我们在开发Android应用程序的时候，一般都把代码中的每一个Activity，Service，
+Provider和Receiver在AndroidManifest.xml中注册，只有这样系统才能启动对应的组件，
+另外这个文件还包含一些权限声明以及使用的SDK版本信息等等。程序打包时，会把
+AndroidManifest.xml进行简单的编译，便于Android系统识别，编译之后的格式是AXML格式，
+如下图Figure3所示：
+        axml头      -->     4byte 文件标志
+        axml文件长度 -->     4byte 文件总长度
+        StringDataSegment           字符串数据段
+        ResourceIdSegment           资源id数据段
+        XmlContentSegment           xml内容段，存放xml内容的数据段，从根节点到
+                                    子节点，依次排开，结构和xml编写的结构一致
+        
+        axml头：其中的axml头是固定标识axml文件的，其值固定时0x00080003。
+        axml文件长度：标识axml文件的大小。
+        StringDataSegment：xml文件中所有字符串类型保存在此。
+        ResourceIdSegment：xml文件中声明的资源文件ID保存于此。
+        XmlContentSegment：是xml的内容段，按照xml文件中的结构依次排开，保存xml的数据内容。
+    6)classes.dex：
+传统的Java程序，首先先把Java文件编译成class文件，字节码都保存在了class文件中，Java
+虚拟机可以通过解释执行这些class文件。而Dalvik虚拟机是在Java虚拟机进行了优化，执行的
+是Dalvik字节码，而这些Dalvik字节码是由Java字节码转换而来，一般情况下，Android应用在
+打包时通过AndroidSDK中的dx工具将Java字节码转换为Dalvik字节码。dx工具可以对多个class
+文件进行合并，重组，优化，可以达到减小体积，缩短运行时间的目的。
+    dx工具的转换过程如图所示：
+    .class文件 * n      ==》    dex文件 dexheader->string_ids->type_ids->fields_ids
+                                        ->...->otherdata
+    如图Figure 4，dx工具把每个.class文件的每个区域的内容进行去重，重组，优化重排后生成
+dex文件，生成的dex文件可以在Dalvik虚拟机执行，且速度比较快。
+    7) resources.arsc：用来记录资源文件和资源ID之间的映射关系，用来根据资源ID寻
+找资源。Android的开发是分模块的，res目录专门用来存放资源文件，当在代码中需要
+调用资源文件时，只需要调用findviewbyId()就可以得到资源文件，每当在res文件夹
+下放一个文件，aapt就会自动生成对应的ID保存在.R文件，我们调用这个ID就可以，但是
+只有这个ID还不够，.R文件只是保证编译程序不报错，实际上在程序运行时，系统要根据ID
+去寻找对应的资源路径，而resources.arsc文件就是用来记录这些ID和资源文件位置对应关
+系的文件。
+
+            APK安装过程
+
+    Adroid的应用安装涉及到如下几个目录：
+        /data/app：存放用户安装的APK的目录，安装时，把APK拷贝于此。
+        /data/data：应用安装完成后，在/data/data目录下自动生成和APK包名（packagename）
+    一样的文件夹，用于存放应用程序的数据。
+        /data/dalvik-cache：存放APK的odex文件，便于应用启动时直接执行。
+    具体安装过程如下：
+        首先，复制APK安装包到/data/app下，然后校验APK的签名是否正确，检查APK的结
+    构是否正常，进而解压并且校验APK中的dex文件，确定dex文件没有被损坏后，再把dex
+    优化成odex，使得应用程序启动时间加快，同时在/data/data目录下建立于APK包名相同的
+    文件夹，如果APK中有lib库，系统会判断这些so库的名字，查看是否以lib开头，是否以.so
+    结尾，再根据CPU的架构解压对应的so库到/data/data/packagename/lib下。
+        APK安装的时候会把DEX文件解压并且优化为odex，odex的格式如Figure 5图所示：
+            odex文件头->dex文件->依赖库->辅助数据
+        odex在原来的dex文件头添加了一些数据，在文件尾部添加了程序运行时需要的依赖库和辅助
+    数据，使得程序运行速度更快。

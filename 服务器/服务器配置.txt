@@ -1,0 +1,63 @@
+安装篇
+
+第一步：配置防火墙(默认情况下，端口80和3306是拒绝访问的，在防火墙上进行配置)：
+
+1.vi /etc/sysconfig/iptables(在"COMMIT"的上一行加上如下两句) 
+2.-A INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT（允许80端口通过防火墙） 
+3.-A INPUT -m state --state NEW -m tcp -p tcp --dport 3306 -j ACCEPT（允许3306端口通过防火墙） 
+
+第二步：安装Apache
+
+使用以下命令安装Apache：
+1.yum install httpd 
+
+安装完之后，重新启动Apache：/etc/init.d/httpd restart
+接着将Apache设置为开机启动：chkconfig httpd on.(这一步使得服务器不需要在每次重启的时候都要手动启动httpd服务)
+
+要查看httpd服务的启动状态，可以使用命令：chkconfig --list httpd(会显示httpd在各个级别(level)下的启动状态)
+
+第三步：安装MySQL
+
+1、使用以下命令安装MySQL：
+
+yum install mysql mysql-server 
+同样，如果出现提示已安装的话，就说明系统安装了MySQL了，可以跳过这一步，否则，系统接下来会自动安装MySQL。
+ 
+安装完成了之后，启动MySQL：/etc/init.d/mysql start
+
+将MySQL设置为开机启动：chkconfig mysqld on
+最后，拷贝配置文件：cp /usr/share/mysql/my-medium.cnf  /etc/my.cnf (在/etc下有个my.cnf文件，直接覆盖就行了)
+
+2、用以下命令给root账户设置密码     
+
+mysql_secure_installation 
+根据提示输入2次密码，就设置成功了。注意，在设置过程中，会提示删除是否anonymous用户，是否拒绝root的远程访问，是否删除测试用的数据库等，这些都需要根据自己的实际情况进行选择。最后出现：Thanks for using MySQL!，设置密码成功了。
+重新启动MySQL：/etc/init.d/mysqld restart
+
+第四步：安装PHP
+
+1、使用以下命令安装PHP：
+
+yum install php 
+
+根据提示往下安装就行了。安装完之后重新启动Apache：/etc/init.d/httpd restart
+2、安装PHP组件，是PHP支持MySQL
+
+可以使用命令：yum search php来查看PHP的组件，选择需要的模块进行安装：
+
+ yum install php-mysql php-gd libjpeg* php-imap php-ldap php-odbc php-pear php-xml php-xmlrpc php-mbstring php-mcrypt php-bcmath php-mhash libmcrypt
+
+安装完之后，重启Apache：/etc/init.d/httpd restart 
+
+重启MySQL：/etc/init.d/mysqld restart
+
+到了这一步，LAMP中的AMP都已经安装完毕了，但是web服务器此时并不能被访问，因为要访问服务器，还需要对Apache和PHP进行相应的配置。
+
+//-------------------------------
+在centos中使用yum安装软件时可能出现Could not retrieve mirrorlist，这种情况一般是网络出现问题。
+如果配置的DHCP动态网络，则在/etc/resolv.conf文件中添加
+nameserver 8.8.8.8
+如果是静态网络，则在/etc/sysconfig/network-scripts/ifcfg-eth0文件中添加
+DNS1=8.8.8.8
+然后重启网络服务，
+service network restart

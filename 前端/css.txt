@@ -1,0 +1,102 @@
+一、工具:
+	Sublime text(Ctrl+~打开Console)
+	去Https://packagecontrol.io/installation#st3复制
+	--插件管理器
+	--1.安装Emmet SideBar ColorPicker
+	--PS
+二、CSS开始
+	1.行间样式 2.内部样式<head>中<style> 3.外部样式 <link>.css文件
+
+  1.样式表优先级 标签名选择器 < class选择器 < id选择器 < 行间样式
+	margin外边距 margin-left:auto;margin-right:auto居中
+	margin:0 auto居中
+
+  2.文字 font-family:字体
+	font-indent:首行缩进(用em或px做单位)
+	line-height:行高
+	font-weight:bold粗体 bolder 100-900设置值
+	font-style:斜体normal italic oblique
+	em可以做便签，表示文字倾斜<em></em>
+	text-decoration:none默认 underline下划线 overline上划线 line-	through中划线
+	letter-spacing: 字母间距(love字母之间的间隙)
+	word-spacing:单词间距(i love you 每个单词之间的间隙)
+
+  3.盒模型
+	就是标签显示区域大小
+
+html标签
+块标签
+群组选择器,h1,h2,h3{这h1,h2,h3的统一管理}
+1.title: 权重最大，所以多放东西用于搜索
+2.div: 无意义
+3.h1-h6: 标题 权重 h1>h2>..>h6
+h1页面最好不要超过一个
+h2页面中不要超过12个
+其他随便
+4.p标签在嵌套不要包含块元素标签
+5.ul无序标签
+ol有序标签
+li列表项 组合标签 *ul,ol的第一层一定是li  li的父级一定是ul或ol*
+6.dl dt dd字典标签
+dt标题dd列表项
+
+内联标签
+特性: 同属性的标签排在一排  内容撑开宽度  不支持宽高 ，不支持上下的padding和margin  代码换行被解析
+1.span
+2.strong标签 权重比较高 可用于强调
+3.em也是强调
+4.a标记<a href="地址" target="打开方式"></a>超链接 target _blank在新页面打开链接 默认(_self)在当前页 一定要加http: #代表当前页
+
+内联块标签 支持所有样式
+5.img <img src="图片地址" alt="图片说明">
+
+标签类型的转换
+display :none显示为无
+	块属性 display:block
+	内联属性 display:inline;
+	内联块属性 display:inline-block
+
+浮动float 元素排在同一排  内容撑开宽度 支持所有样式  脱离文档流 遇到相邻或者父级的边界停下来
+BFC清浮动  处理浮动脱离文档流
+1.父级也浮动 样式会失效
+2.父级加display:inline-blank 样式失效(如果需要让元素居中加text-align:centor)
+3.父级加高 拓展性不好
+4.br标签 <br clear="all" />不规范
+5.clear元素的某一方向不允许出现其他的浮动元素 both左右 left左 right右 不符合w3c 违反结构 样式 行为三者分离原则
+6.:after{ content:""; display:block; clear:both;}
+加class
+.clear:after{content:"";display:block;clear:both;}
+.clear{ zoom:1;}
+
+overflow hidden溢出隐藏 auto溢出出现滚动条 scroll出现滚动条
+元素的伪类 元素的特殊属性 div:hover{}鼠标停留
+
+
+定位 把一个元素 按照一定的方式 定到相应位置
+1.position relative相对自身定位  absolute绝对定位 相对父级原点 fixed针对窗口定位IE6不支持 偏移量left .. bottom
+优先级
+id 	10000
+class 	100
+div	1
+
+#id div  10000+1
+#id div div 10000+1+1
+#id .class 10000+100
+#id .class div 10000+100+1
+
+兼容性
+1.在ie6下，子集的宽度会撑开父级设置好的宽度 盒模型的计算一定要精确
+2.ie6中，元素浮动，如果宽度需要内容撑开，需要给里面的块元素都添加浮动
+3.在ie6、7下 元素要通过浮动排在一排，就需要给这行元素都叫浮动
+4.注意标签的嵌套规则 p标签
+5.在ie6下，元素的高度如果小于19px的时候，会被当成19px来处理，解决方法: overflow:hidden
+6. 在ie6下，不支持1px的dotted边框样式 解决方法:切背景平铺
+7.在ie下父级有边框的时候，子元素的margin会失效 解决方法:触发父级的haslayout属性(zoom:1)
+8.ie6下双边距 在ie6下，块元素有浮动有横向的margin的值的时候，横向的margin的值会扩大两倍  解决:display:inline;
+9.设置margin-left 一行中左侧的第一个元素有双边距 margin-right一行中右侧有双边距  解决:display:inline;
+10.在ie6 7下，li本身没有浮动，li里面的内容有浮动，li下会产生一个间隙  解决方法 1.给li加浮动  2.给li加 vertival-align:top
+11.在ie6下 最小高度和li的间隙问题共存的时候，给li加浮动，vertival-align:top不好使  解决方法: float:left  overflow:hidden
+12.当一行子集元素之和和父级宽度相差超过3px，或者子级元素不满行的情况时候,最后一行的子集元素的margin-bottom会失效  无解决方法  尽量避免
+13.在ie6下的文字溢出bug  子元素的宽度和父级的宽度如果相差小于3px的时候，两个浮动元素中间有注释或者内联元素，就会出现文字溢出，内联元素越多，溢出越多  解决方法:用div把注释或者内联元素包起来
+
+14.
