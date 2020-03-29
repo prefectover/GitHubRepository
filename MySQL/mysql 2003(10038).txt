@@ -18,3 +18,5 @@ service mysqld restart
  为dead, systemctl start firewalld
  firewall-cmd --permanent --zone=public --add-port=3306/tcp
  firewall-cmd --reload
+
+ hvg
