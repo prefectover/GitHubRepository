@@ -1,0 +1,20 @@
+1、查看服务器mysql情况
+    登录MySQL数据库 mysql -hlocalhost -uroot -p
+    mysql -h127.0.0.1 -uroot -p123456 -P3306
+    输入以下命令
+    use mysql
+    SELECT User, Host FROM mysql.user;
+
+显示的root为localhost本地登录，修改命令如下：
+
+grant all privileges on *.* to 'root'@'%' identified by '密码';
+flush privileges;
+
+然后重启mysql 数据库
+service mysqld restart
+
+如果还是无法连接，可能是防火墙的问题
+ systemctl status firewalld
+ 为dead, systemctl start firewalld
+ firewall-cmd --permanent --zone=public --add-port=3306/tcp
+ firewall-cmd --reload

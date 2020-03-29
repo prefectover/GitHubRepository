@@ -1,0 +1,37 @@
+centos出现“FirewallD is not running”怎么办
+
+1.查看firewalld状态
+    systemctl status firewalld
+    dead状态，即防火墙未开启。
+    systemctl start firewalld
+
+2.通过systemctl start firewalld开启防火墙，没有任何提示即开启成功。
+    systemctl start firewalld
+
+3.如果要关闭防火墙设置，可能通过systemctl stop firewalld这条指令来关闭该功能。
+    systemctl stop firewalld
+
+4. firewall-cmd --reload   #重新加载配置
+
+5. 查看当前开了哪些端口其实一个服务对应一个端口
+    firewall-cmd --list-services
+    firewall-cmd --list-ports	#查看已经开放的端口
+
+6. 可以通过下面这个命令查看可以打开的服务有哪些
+    firewall-cmd --get-services
+
+可以通过下面的命令添加一个服务到firewalld
+    firewall-cmd --add-service=http #http换成想要开放的service
+这样添加的service当前立刻生效，但系统下次启动就失效，可以测试使用。要永久开发一个service，加上 --permanent
+    firewall-cmd --permanent --add-service=http
+
+
+# MySQL配置防火墙
+firewall-cmd --permanent --zone=public --add-port=3306/tcp
+# Nginx配置防火墙
+firewall-cmd --permanent --zone=public --add-port=80/tcp
+提示success，表示设置成功，这样就可以继续后面的设置了。
+
+*** 然后通过
+    systemctl restart firewalld.service
+重启防火墙就生效了

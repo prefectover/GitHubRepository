@@ -1,0 +1,69 @@
+网址: https://lnmp.org/install.html
+
+一、安装LNMP -- Linux Nginx MySQL PHP
+    yum install screen -y  # 防止安装时间过长
+    screen -S lnmp
+    wget http://soft.vpser.net/lnmp/lnmp1.6.tar.gz -cO lnmp1.6.tar.gz && tar zxf lnmp1.6.tar.gz && cd lnmp1.6 && ./install.sh lnmp
+
+二、添加域名 
+    lnmp vhost add
+    #输入域名 www.lyxcloud.xyz
+
+
+    cd #网站路径
+    wget https://test-fishc.oss-cn-hangzhou.aliyuncs.com/HWC/resume.zip
+
+    unzip resume.zip
+
+    chown www:www -R /#网站路径
+
+三、ftp
+安装Pureftpd
+    cd lnmp1.6
+    ./pureftpd.sh
+    lnmp ftp add
+        添加user password "指定目录"
+如果提示: 
+    421 Home directory not available - aborting
+    是否是 "指定目录"，未新建
+    如果使用flashFTP上传失败，是否是 "指定目录" 未添加文件夹权限
+    chmod -R 777 "指定目录"
+
+四、mysql
+    1、登录MySQL数据库 mysql -hlocalhost -uroot -p
+    mysql -h127.0.0.1 -uroot -p123456 -P3306
+
+
+五、仅安装Nginx、MySQL
+    wget http://soft.vpser.net/lnmp/lnmp1.6.tar.gz -cO lnmp1.6.tar.gz && tar zxf lnmp1.6.tar.gz && cd lnmp1.6
+    增加单独nginx安装，安装包目录下运行：
+    ./install.sh nginx  #进行安装；
+    增加单独数据库安装，安装包目录下运行：
+    ./install.sh db #进行安装；
+
+六、设置nginx开启启动
+    sudo chkconfig nginx on
+
+CentOS7.x自带firewall防火墙，FTP使用需要开启20 21 22 30000-35000几个端口.
+操作命令如下：
+firewall-cmd -–zone=public -–add-port=20/tcp -–permanent
+firewall-cmd -–zone=public -–add-port=21/tcp -–permanent
+firewall-cmd -–zone=public -–add-port=22/tcp -–permanent
+firewall-cmd -–zone=public -–add-port=30000-35000/tcp -–permanent
+firewall-cmd -–zone=public -–add-port=20/udp -–permanent
+firewall-cmd -–zone=public -–add-port=21/udp -–permanent
+firewall-cmd -–zone=public -–add-port=30000-35000/udp -–permanent
+
+#开启80端口
+firewall-cmd --zone=public --add-port=80/tcp --permanent
+
+添加成功后，重启防火墙,即可！
+systemctl restart firewalld.service
+
+通过systemctl status firewalld查看firewalld状态
+systemctl status firewalld
+
+#查看端口占用
+netstat -ntlp
+
+

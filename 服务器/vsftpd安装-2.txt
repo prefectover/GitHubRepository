@@ -1,0 +1,146 @@
+第一步：安装vsftp pam db4
+    yum install vsftpd pam* db4* -y
+    通过setup对系统服务及防火墙进行配置，然后reboot系统
+    或者使用命令将vsftp配置为系统服务
+    chkconfig --level 35 vsftpd on
+
+第二步：配置vsftpd服务的宿主
+    useradd vsftpdadmin -s /sbin/nologin
+    这个vsftpdadmin只是用来替换root的，并不需要登录
+
+第三步：建立ftp虚拟宿主帐户
+    useradd ftpuser -s /sbin/nologin
+这ftpuser只个虚拟帐户的宿主，本身是不用登录的
+
+第四步：配置vsftpd.conf
+    更改配置前最好备份一下然后再改
+    vim /etc/vsftpd/vsftpd.conf
+
+    主要修改下面部分
+    anonymous_enable=YES  -->  anonymous_enable=NO   //不允许匿名用户访问，默认是允许。
+    #chroot_list_enable=YES  -->  chroot_list_enable=YES      //不允许FTP用户离开自己主目录，默认是被注释掉的。
+    #chroot_list_file=/etc/vsftpd/chroot_list --> chroot_list_file=/etc/vsftpd/chroot_list  //如果开启了chroot_list_enable=YES，那么一定要开启这个，这条是锁定登录用户只能家目录的位置，如果不开启用户登录时就会报500 OOPS的错。
+    注意：/etc/vsftp/chroot_list本身是不存在的，
+    这要建立vim /etc/vsftp/chroot_list，然后将帐户输入一行一个，保存就可以了
+
+    无需修改
+
+    local_enable=YES      //允许本地用户访问，默认就是YES，不用改
+    write_enable=YES      //允许写入，默认是YES，不用改
+    local_umask=022       //上传后文件的权限掩码，不用改
+    dirmessage_enable=YES //开启目录标语，默认是YES，开不开无所谓，我是默认就行
+    xferlog_enable=YES    //开启日志，默认是YES，不用改
+    connect_from_port_20=YES   //设定连接端口20,不用改
+    xferlog_std_format=YES   //设定vsftpd的服务日志保存路径，不用改
+    （这步后面要有几个操作才能运行，也就是touch这个文件（见第五步），因为它本身不存在，而且还要给文件写入的权限）
+    #idle_session_timeout=600  -->  idle_session_timeout=600  //会话超时，客户端连接到ftp但未操作，默认被注释掉，可根据个人情况修改
+    #async_abor_enable=YES  -->   async_abor_enable=YES     //支持异步传输功能，默认是注释掉的，去掉注释
+    #ascii_upload_enable=YES  -->   ascii_upload_enable=YES   //支持ASCII模式的下载功能，默认是注释掉的，去掉注释
+    #ascii_download_enable=YES  -->   ascii_download_enable=YES   //支持ASCII模式的上传功能，默认是注释掉的，去掉注释
+    #ftpd_banner=Welcome to blah FTP service  //FTP的登录欢迎语，本身是被注释掉的，去不去都行
+    #chroot_local_user=YES  --> chroot_local_user=YES    //禁止本地用户登出自己的FTP主目录，本身被注释掉，去掉注释
+    pam_service_name=vsftpd  //设定pam服务下vsftpdd的验证配置文件名，不用改
+    userlist_enable=YES    //拒绝登录用户名单，不用改
+    TCP_wrappers=YES    //限制主机对VSFTP服务器的访问，不用改（通过/etc/hosts.deny和/etc/hosts.allow这两个文件来配置）
+
+#如果没有则添加
+
+pam_service_name=vsftpd
+userlist_enable=YES
+userlist_deny=NO
+userlist_file=/etc/vsftpd/vsftpd.user_list
+tcp_wrappers=YES
+chroot_local_user=NO
+
+#设定启用虚拟用户功能。
+guest_enable=YES
+#指定虚拟用户的宿主用户。
+guest_username=ftpuser
+#设定虚拟用户的权限符合他们的宿主用户。
+virtual_use_local_privs=YES
+#设定虚拟用户个人Vsftp的配置文件存放路径
+user_config_dir=/etc/vsftpd/vconf
+
+#wq保存
+
+第五步：建立日志文件
+    touch /var/log/vsftpd.log    //日志文件
+    chown vsftpdadmin.vsftpdadmin /var/log/vsftpd.log   //属于vsftpdadmin这个宿主
+第六步：建立虚拟用户文件
+    #mkdir /etc/vsftpd/vconf/
+    touch /etc/vsftpd/vconf/vir_user
+第七步：建立虚拟用户
+    vim /etc/vsftpd/vconf/vir_user
+    virtualuser           //用户名
+    12345678           //密码
+    注意：第一行用户名，第二行是上一行用户名的密码，其他人的以此类推
+
+    mkdir /etc/vsftp
+    touch /etc/vsftp/chroot_list
+    vim /etc/vsftp/chroot_list
+    加入需要锁定登录用户只能家目录的位置然后将帐户输入一行一个，保存就可以了
+
+    virtualuser           //用户名
+
+
+第八步：生成数据库
+    db_load -T -t hash -f /etc/vsftpd/vconf/vir_user /etc/vsftpd/vconf/vir_user.db
+
+第九步：设置数据库文件的访问权限
+    chmod 600 /etc/vsftpd/vconf/vir_user.db
+    chmod 600 /etc/vsftpd/vconf/vir_user
+
+第十步：修改/etc/pam.d/vsftpd内容
+    echo "auth required pam_userdb.so db=/etc/vsftpd/vconf/vir_user" >> /etc/pam.d/vsftpd
+    echo "account required pam_userdb.so db=/etc/vsftpd/vconf/vir_user" >> /etc/pam.d/vsftpd 
+第十步：创建用户的配置文件
+    注意：用户配置文件的名字要和创建的“虚拟用户”名字对应
+    touch /etc/vsftpd/vconf/virtualuser
+    vim /etc/vsftpd/vconf/virtualuser
+
+
+    输入：
+#虚拟用户的个人目录路径
+local_root=/home/virtualuser
+anonymous_enable=NO
+write_enable=YES
+local_umask=022
+anon_upload_enable=NO
+anon_mkdir_write_enable=NO
+idle_session_timeout=600
+data_connection_timeout=120
+max_clients=10
+max_per_ip=5
+#本地用户的最大传输速度，单位是Byts/s，我设定的是10M
+local_max_rate=1048576
+
+注意：复制完成后，看看第一行和最后一行有没有丢失字符。如果有丢失，后面会报错。
+
+
+
+附加：常见错误
+错误 ：500 OOPS: cannot change directory:/
+
+解决方法:
+在终端输入命令：
+
+setsebool ftpd_disable_trans 1
+
+重启vsftpd服务器
+systemctl restart vsftpd.service
+
+错误：530 Permission denied.
+
+在/etc/vsftpd/vsftpd.user_list 里添加 ftp用户
+
+
+
+错误：500 OOPS: unrecognised variable in config file: cal_root
+
+就是上面说了。复制的时候丢失了字符
+
+vim /etc/vsftpd/vconf/virtualuser
+检查是否和上面一样，一般最前面的2个字符丢失
+
+
+如果上述无效，检查下是否有此文件夹，文件夹不存在也会报这样的错误。

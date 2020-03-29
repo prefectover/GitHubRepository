@@ -1,0 +1,33 @@
+1、显示已经安装的软件包
+    yum list installed
+
+2、查找可以安装的软件包 （以 tomcat 为例）
+    yum list tomcat
+
+3、安装软件包 （以 tomcat 为例）
+    yum install tomcat
+
+4、卸载软件包 （以 tomcat 为例）
+    yum remove tomcat
+
+5、列出软件包的依赖 （以 tomcat 为例）
+    yum deplist tomcat
+
+6、-y 自动应答yes
+    yum -y install tomcat
+
+7、info 显示软件包的描述信息和概要信息
+    yum info tomcat
+
+8、升级软件包
+    升级所有的软件包
+    yum update
+
+    升级某一个软件包 ，以升级 tomcat 为例
+    yum update tomcat
+
+    检查可更新的程序
+    yum check-update
+
+Yum 可视化图形界面 Yumex
+    yum install yumex
