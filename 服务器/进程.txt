@@ -1,0 +1,7 @@
+1.ps命令--提供系统过去信息的一次性快照
+    ps aux或者ps lax 
+    或 ps -ef
+2.结束进程
+    kill pid
+    强制结束
+    kill -9 pid

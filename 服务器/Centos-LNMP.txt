@@ -66,4 +66,10 @@ systemctl status firewalld
 #查看端口占用
 netstat -ntlp
 
+重启: 
+    supervisorctl shutdown
+    supervisord -c /etc/supervisord.conf
+     lnmp nginx restart
+     
+
 
