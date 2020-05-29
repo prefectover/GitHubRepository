@@ -1,0 +1,24 @@
+安装 node (默认就安装了npm)
+    npm config set registry https://registry.npm.taobao.org/
+    npm config set ELECTRON_MIRROR http://npm.taobao.org/mirrors/electron/
+
+    备用地址
+    npm config set registry https://registry.npm.taobao.org/
+    npm config set ELECTRON_MIRROR https://cdn.npm.taobao.org/dist/electron/
+
+
+
+安装yarn https://blog.csdn.net/yw00yw/article/details/81354533
+    npm install -g yarn
+    查看版本：yarn --version
+
+    Yarn 淘宝源安装，分别复制粘贴以下代码行到黑窗口运行即可
+    yarn config set registry https://registry.npm.taobao.org -g
+    yarn config set sass_binary_site http://cdn.npm.taobao.org/dist/node-sass -g
+
+vue-cli3.0创建项目  https://www.jianshu.com/p/92bb6fb982a2
+    vue create electron-vue-demo
+安装electron
+    vue add electron-builder
+
+显示 vue ui
